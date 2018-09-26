@@ -1,15 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>登录</title>
-</head>
-<body>
-    <form action="/login_action" method="get">
-        <p>用户名: <input type="text" name="username" /></p>
-        <p>密码: <input type="password" name="password" /></p>
-        {{ error }}<br>
-        <input type="submit" value="Submit" />
-    </form>
-</body>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>登录页面</title>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://v3.bootcss.com/examples/signin/signin.css" rel="stylesheet">
+        <style type="text/css">
+            .errorText{
+                color:#F00
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <form class="form-signin" method="post" action="/login_action/">
+            <h2 class="form-signin-heading">测试平台</h2>
+            <input type="text" name="username" id="username" class="form-control" placeholder="用户名">
+            <input type="password" name="password" id="password" class="form-control" placeholder="密码">
+            <p class="errorText">{{ error }}</p>
+		    {% csrf_token %}
+            <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+            </form>
+        </div>
+    </body>
 </html>
