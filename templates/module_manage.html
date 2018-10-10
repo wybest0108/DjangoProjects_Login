@@ -49,8 +49,8 @@
             <div class="row">
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav nav-sidebar">
-                        <li class="active"><a href="#">项目管理</a></li>
-                        <li><a href="/module_manage/">模块管理</a></li>
+                        <li><a href="/project_manage/">项目管理</a></li>
+                        <li class="active"><a href="#">模块管理</a></li>
                     </ul>
                     <ul class="nav nav-sidebar">
                         <li><a href="">用例管理</a></li>
@@ -68,27 +68,21 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>所属项目</th>
                                     <th>名称</th>
                                     <th>描述</th>
-                                    <th>状态</th>
                                     <th>创建时间</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for project in projects %}
-                                    <tr>
-                                        <td>{{ project.id }}</td>
-                                        <td>{{ project.name }}</td>
-                                        <td>{{ project.description }}</td>
-                                        <td>
-                                            {% if project.status %}
-                                                <img src="/static/admin/img/icon-yes.svg" alt="True">
-                                            {% else %}
-                                                <img src="/static/admin/img/icon-no.svg" alt="False">
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ project.create_time }}</td>
-                                    </tr>
+                                {% for module in modules %}
+                                <tr>
+                                    <td>{{ module.id }}</td>
+                                    <td>{{ module.project }}</td>
+                                    <td>{{ module.name }}</td>
+                                    <td>{{ module.description }}</td>
+                                    <td>{{ module.create_time }}</td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
