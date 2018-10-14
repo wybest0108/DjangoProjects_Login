@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django.contrib import auth
 from django.http import HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
-from user_app.models import Project, Module
 
 # Create your views here.
 
@@ -23,23 +21,9 @@ def login_action(request):
             if user is not None:
                 auth.login(request, user)
                 request.session["user"] = username
-                return HttpResponseRedirect("/project_manage/")
+                return HttpResponseRedirect("/manage/project_manage/")
             else:
                 return render(request, "index.html", {"error": "用户名或者密码错误"})
-
-
-@login_required
-def project_manage(request):
-    username = request.session.get("user", "")
-    project_all = Project.objects.all()
-    return render(request, "project_manage.html", {"user": username, "projects": project_all})
-
-
-@login_required
-def module_manage(request):
-    username = request.session.get("user", "")
-    module_all = Module.objects.all()
-    return render(request, "module_manage.html", {"user": username, "modules": module_all})
 
 
 def logout(request):

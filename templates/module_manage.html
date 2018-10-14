@@ -1,102 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>测试平台</title>
-        {% load static %}
-        <!-- Bootstrap core CSS -->
-        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <link href="{% static 'css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
-        <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
-
-    </head>
-
-    <body>
-
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">测试平台</a>
-                </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href=""> 欢迎您，{{ user }}</a></li>
-                        <li><a href="/logout/">退出</a></li>
-                    </ul>
-                    <form class="navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </form>
-                </div>
+{% extends "base.html" %}
+{% block title %}
+    <title>模块管理</title>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar" style="z-index: 50;">
+                <ul class="nav nav-sidebar">
+                    <li><a href="/manage/project_manage/">项目管理</a></li>
+                    <li class="active"><a href="javascript:void(0)">模块管理</a></li>
+                </ul>
+                <ul class="nav nav-sidebar">
+                    <li><a href="">用例管理</a></li>
+                    <li><a href="">任务管理</a></li>
+                </ul>
+                <ul class="nav nav-sidebar">
+                    <li><a href="">MockServer</a></li>
+                    <li><a href="">测试工具</a></li>
+                </ul>
             </div>
-        </nav>
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-3 col-md-2 sidebar">
-                    <ul class="nav nav-sidebar">
-                        <li><a href="/project_manage/">项目管理</a></li>
-                        <li class="active"><a href="#">模块管理</a></li>
-                    </ul>
-                    <ul class="nav nav-sidebar">
-                        <li><a href="">用例管理</a></li>
-                        <li><a href="">任务管理</a></li>
-                    </ul>
-                    <ul class="nav nav-sidebar">
-                        <li><a href="">MockServer</a></li>
-                        <li><a href="">测试工具</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h3 class="sub-header">项目列表</h3>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>所属项目</th>
-                                    <th>名称</th>
-                                    <th>描述</th>
-                                    <th>创建时间</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for module in modules %}
-                                <tr>
-                                    <td>{{ module.id }}</td>
-                                    <td>{{ module.project }}</td>
-                                    <td>{{ module.name }}</td>
-                                    <td>{{ module.description }}</td>
-                                    <td>{{ module.create_time }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h3 class="sub-header">模块列表</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>所属项目</th>
+                                <th>名称</th>
+                                <th>描述</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for module in modules %}
+                            <tr>
+                                <td>{{ module.project }}</td>
+                                <td>{{ module.name }}</td>
+                                <td>{{ module.description }}</td>
+                                <td>{{ module.create_time }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="{% static 'js/jquery.min.js' %}"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
-    </body>
-</html>
+    </div>
+{% endblock %}
