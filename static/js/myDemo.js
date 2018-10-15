@@ -34,14 +34,14 @@ function createProject() {
         autoOpen: true,
         modal: true,
         resizable: false,
-        width: 400,
-        height: 300,
+        width: 440,
+        height: 330,
         title: "新建项目",
         position: {
             using: function (pos) {
                 var topOffset = $(this).css(pos).offset().top;
                 if (topOffset = 0||topOffset>0) {
-                    $(this).css('top', ($(window).height() - 300) / 2);
+                    $(this).css('top', ($(window).height() - 330) / 2);
                 }
             }
         },
@@ -111,14 +111,14 @@ function showProjectInfo(data, id) {
         autoOpen: true,
         modal: true,
         resizable: false,
-        width: 400,
-        height: 300,
+        width: 440,
+        height: 330,
         title: "编辑项目",
         position: {
             using: function (pos) {
                 var topOffset = $(this).css(pos).offset().top;
                 if (topOffset = 0||topOffset>0) {
-                    $(this).css('top', ($(window).height() - 300) / 2);
+                    $(this).css('top', ($(window).height() - 330) / 2);
                 }
             }
         },
