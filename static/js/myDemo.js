@@ -17,7 +17,7 @@ function deleteProject(name, id){
         },
         buttons:{
             '确定':function(){
-                window.location.href("/manage/delete_project/" + id + "/");
+                window.location.href="/manage/delete_project/" + id + "/";
                 $(this).dialog("close");
             },
             '取消':function(){
