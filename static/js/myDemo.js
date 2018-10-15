@@ -71,7 +71,7 @@ function resetProjectForm() {
     $("#name").val("");
     $("#description").val("");
     $("#error-tip").hide();
-    $("#status").attr("checked", "checked");
+    $("#status").prop("checked", true);
 }
 
 function isProjectNameValid(projectName) {
@@ -105,7 +105,7 @@ function showProjectInfo(data, id) {
     $("#name").val(projectInfo.name);
     $("#description").val(projectInfo.description);
     $("#error-tip").hide();
-    $("#status").attr("checked", projectInfo.status? "checked" : "unchecked");
+    $("#status").prop("checked", projectInfo.status);
 
     $( "#dialog-form-project" ).dialog({
         autoOpen: true,
