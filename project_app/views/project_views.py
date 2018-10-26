@@ -4,6 +4,7 @@ from project_app.models import Project, Module
 from django.http import HttpResponse, HttpResponseRedirect
 import json
 
+
 @login_required
 def project_manage(request):
     username = request.session.get("user", "")
