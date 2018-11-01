@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test import Client
 
+
 # 测试User Model
 class UserModelTestCase(TestCase):
     def setUp(self):
@@ -69,3 +70,16 @@ class LoginTestCase(TestCase):
     def test_username_password_correct(self):
         response = self.client.post("/login_action/", {"username": "Linda01", "password": "Linda01123456"})
         self.assertRedirects(response, "/manage/project_manage/")
+
+
+# 测试退出
+class LogoutTestCase(TestCase):
+    def setUp(self):
+        User.objects.create_user("Linda01", "Linda01@gmail.com", "Linda01123456")
+        self.client = Client()
+        self.client.post("/login_action/", {"username": "Linda01", "password": "Linda01123456"})
+
+    def test_logout(self):
+        response = self.client.get("/logout/")
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, "/")

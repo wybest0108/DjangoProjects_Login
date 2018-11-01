@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from project_app.models import Project, Module
+from project_app.models import Project
 from django.http import HttpResponse, HttpResponseRedirect
 import json
 
@@ -10,13 +10,6 @@ def project_manage(request):
     username = request.session.get("user", "")
     project_all = Project.objects.all()
     return render(request, "project_manage.html", {"user": username, "projects": project_all})
-
-
-@login_required
-def module_manage(request):
-    username = request.session.get("user", "")
-    module_all = Module.objects.all()
-    return render(request, "module_manage.html", {"user": username, "modules": module_all})
 
 
 @login_required

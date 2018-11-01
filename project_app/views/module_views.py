@@ -16,16 +16,10 @@ def module_manage(request):
 def search_module(request):
     username = request.session.get("user", "")
     keyword = request.GET.get("keyword", "")
-    print(keyword)
     if keyword == "":
-        print(keyword)
-        print("keyword is empty")
         return HttpResponseRedirect("/manage/module_manage/")
     else:
-        print(keyword)
-        print("keyword not empty")
         result_list = Module.objects.filter(name__contains=keyword)
-        print(result_list)
         return render(request, "module_manage.html", {"user": username, "modules": result_list, "type": "list"})
 
 
