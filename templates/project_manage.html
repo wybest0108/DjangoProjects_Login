@@ -7,12 +7,12 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar" style="z-index: 50;">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="javascript:void(0)">项目管理</a></li>
+                    <li class="active"><a href="/manage/project_manage/">项目管理</a></li>
                     <li><a href="/manage/module_manage/">模块管理</a></li>
                 </ul>
                 <ul class="nav nav-sidebar">
-                    <li><a href="">用例管理</a></li>
-                    <li><a href="">任务管理</a></li>
+                    <li><a href="/interface/case_manage">用例管理</a></li>
+                    <li><a href="/interface/task_manage">任务管理</a></li>
                 </ul>
                 <ul class="nav nav-sidebar">
                     <li><a href="">MockServer</a></li>
@@ -91,5 +91,6 @@
             {% csrf_token %}
         </form>
     </div>
-
+    {% load static %}
+    <script src="{% static 'js/projectManage.js' %}"></script>
 {% endblock %}
