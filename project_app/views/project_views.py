@@ -7,20 +7,18 @@ import json
 
 @login_required
 def project_manage(request):
-    username = request.session.get("user", "")
     project_all = Project.objects.all()
-    return render(request, "project_manage.html", {"user": username, "projects": project_all})
+    return render(request, "project_manage.html", {"projects": project_all})
 
 
 @login_required
 def search_project(request):
-    username = request.session.get("user", "")
     keyword = request.GET.get("keyword", "")
     if keyword == "":
         return HttpResponseRedirect("/manage/project_manage/")
     else:
         result_list = Project.objects.filter(name__contains=keyword)
-        return render(request, "project_manage.html", {"user": username, "projects": result_list})
+        return render(request, "project_manage.html", {"projects": result_list})
 
 
 @login_required

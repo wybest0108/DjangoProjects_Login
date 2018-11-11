@@ -3,66 +3,48 @@
     <title>项目管理</title>
 {% endblock %}
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" style="z-index: 50;">
-                <ul class="nav nav-sidebar">
-                    <li class="active"><a href="/manage/project_manage/">项目管理</a></li>
-                    <li><a href="/manage/module_manage/">模块管理</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="/interface/case_manage">用例管理</a></li>
-                    <li><a href="/interface/task_manage">任务管理</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="">MockServer</a></li>
-                    <li><a href="">测试工具</a></li>
-                </ul>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h3 class="sub-header">项目列表
+            <div style="overflow: hidden; float:right; font-size: 14px">
+                <form style="float: left; margin-right: 10px;" action="/manage/search_project/" method="get">
+                    <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
+                    <input type="submit" class="btn-success" value="搜索" />
+                </form>
+                <button style="float: right" class="btn-success" onclick="createProject();">新增</button>
             </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h3 class="sub-header">项目列表
-                    <div style="overflow: hidden; float:right; font-size: 14px">
-                        <form style="float: left; margin-right: 10px;" action="/manage/search_project/" method="get">
-                            <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
-                            <input type="submit" class="btn-success" value="搜索" />
-                        </form>
-                        <button style="float: right" class="btn-success" onclick="createProject();">新增</button>
-                    </div>
-                </h3>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>名称</th>
-                                <th>描述</th>
-                                <th>状态</th>
-                                <th>创建时间</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                                <tr>
-                                    <td>{{ project.name }}</td>
-                                    <td>{{ project.description }}</td>
-                                    <td>
-                                        {% if project.status %}
-                                            <img src="/static/admin/img/icon-yes.svg" alt="True">
-                                        {% else %}
-                                            <img src="/static/admin/img/icon-no.svg" alt="False">
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ project.create_time | date:"Y-m-d H:i" }}</td>
-                                    <td>
-                                        <a href="javascript:void(0)" onclick='editProject("{{ project.id }}")'>编辑</a>&nbsp;&nbsp;
-                                        <a href="javascript:void(0)" onclick='deleteProject("{{ project.name }}", "{{ project.id }}")'>删除</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        </h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                        <tr>
+                            <td>{{ project.name }}</td>
+                            <td>{{ project.description }}</td>
+                            <td>
+                                {% if project.status %}
+                                    <img src="/static/admin/img/icon-yes.svg" alt="True">
+                                {% else %}
+                                    <img src="/static/admin/img/icon-no.svg" alt="False">
+                                {% endif %}
+                            </td>
+                            <td>{{ project.create_time | date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick='editProject("{{ project.id }}")'>编辑</a>&nbsp;&nbsp;
+                                <a href="javascript:void(0)" onclick='deleteProject("{{ project.name }}", "{{ project.id }}")'>删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -91,6 +73,9 @@
             {% csrf_token %}
         </form>
     </div>
+{% endblock %}
+
+{% block extra-JS %}
     {% load static %}
     <script src="{% static 'js/projectManage.js' %}"></script>
-{% endblock %}
+{% endblock  %}

@@ -3,90 +3,74 @@
     <title>模块管理</title>
 {% endblock %}
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" style="z-index: 50;">
-                <ul class="nav nav-sidebar">
-                    <li><a href="/manage/project_manage/">项目管理</a></li>
-                    <li class="active"><a href="/manage/module_manage/">模块管理</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="/interface/case_manage">用例管理</a></li>
-                    <li><a href="/interface/task_manage">任务管理</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                    <li><a href="">MockServer</a></li>
-                    <li><a href="">测试工具</a></li>
-                </ul>
+    {% if type == "list" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h3 class="sub-header">模块列表
+                <div style="overflow: hidden; float:right; font-size: 14px">
+                    <form style="float: left; margin-right: 10px;" action="/manage/search_module/" method="get">
+                        <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
+                        <input type="submit" class="btn-success" value="搜索" />
+                    </form>
+                    <button style="float: right" class="btn-success" onclick="window.location.href='/manage/add_module/'">新增</button>
+                </div>
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>所属项目</th>
+                            <th>描述</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for module in modules %}
+                        <tr>
+                            <td>{{ module.name }}</td>
+                            <td>{{ module.project }}</td>
+                            <td>{{ module.description }}</td>
+                            <td>{{ module.create_time | date:"Y-m-d H:i"  }}</td>
+                            <td>
+                                <a href="/manage/edit_module/{{ module.id }}/">编辑</a>&nbsp;&nbsp;
+                                <a href="javascript:void(0)" onclick='deleteModule("{{ module.name }}", "{{ module.id }}")'>删除</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-            {% if type == "list" %}
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h3 class="sub-header">模块列表
-                        <div style="overflow: hidden; float:right; font-size: 14px">
-                            <form style="float: left; margin-right: 10px;" action="/manage/search_module/" method="get">
-                                <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
-                                <input type="submit" class="btn-success" value="搜索" />
-                            </form>
-                            <button style="float: right" class="btn-success" onclick="window.location.href='/manage/add_module/'">新增</button>
-                        </div>
-                    </h3>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>名称</th>
-                                    <th>所属项目</th>
-                                    <th>描述</th>
-                                    <th>创建时间</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for module in modules %}
-                                <tr>
-                                    <td>{{ module.name }}</td>
-                                    <td>{{ module.project }}</td>
-                                    <td>{{ module.description }}</td>
-                                    <td>{{ module.create_time | date:"Y-m-d H:i"  }}</td>
-                                    <td>
-                                        <a href="/manage/edit_module/{{ module.id }}/">编辑</a>&nbsp;&nbsp;
-                                        <a href="javascript:void(0)" onclick='deleteModule("{{ module.name }}", "{{ module.id }}")'>删除</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if type == "add" %}
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h3 class="sub-header">新增模块</h3>
-                    <form method="post" action="/manage/add_module/">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-default">创建</button>
-                        <button class="btn btn-default" onclick="window.location.href='/manage/module_manage/'; return false;">取消</button>
-
-                    </form>
-                </div>
-            {% endif %}
-
-            {% if type == "edit" %}
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h3 class="sub-header">编辑模块</h3>
-                    <form role="form" method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-default">保存</button>
-                        <button class="btn btn-default" onclick="window.location.href='/manage/module_manage/'; return false;">取消</button>
-                    </form>
-                </div>
-            {% endif %}
         </div>
-    </div>
+    {% endif %}
+
+    {% if type == "add" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h3 class="sub-header">新增模块</h3>
+            <form method="post" action="/manage/add_module/">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-default">创建</button>
+                <button class="btn btn-default" onclick="window.location.href='/manage/module_manage/'; return false;">取消</button>
+
+            </form>
+        </div>
+    {% endif %}
+
+    {% if type == "edit" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h3 class="sub-header">编辑模块</h3>
+            <form role="form" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-default">保存</button>
+                <button class="btn btn-default" onclick="window.location.href='/manage/module_manage/'; return false;">取消</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra-JS %}
     {% load static %}
     <script src="{% static 'js/moduleManage.js' %}"></script>
-{% endblock %}
+{% endblock  %}

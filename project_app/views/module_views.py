@@ -7,20 +7,18 @@ from project_app.forms import ModuleForm
 
 @login_required
 def module_manage(request):
-    username = request.session.get("user", "")
     module_all = Module.objects.all()
-    return render(request, "module_manage.html", {"user": username, "modules": module_all, "type": "list"})
+    return render(request, "module_manage.html", {"modules": module_all, "type": "list"})
 
 
 @login_required
 def search_module(request):
-    username = request.session.get("user", "")
     keyword = request.GET.get("keyword", "")
     if keyword == "":
         return HttpResponseRedirect("/manage/module_manage/")
     else:
         result_list = Module.objects.filter(name__contains=keyword)
-        return render(request, "module_manage.html", {"user": username, "modules": result_list, "type": "list"})
+        return render(request, "module_manage.html", {"modules": result_list, "type": "list"})
 
 
 @login_required

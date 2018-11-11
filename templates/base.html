@@ -20,6 +20,9 @@
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
         <!-- Customer js -->
+        <script src="{% static 'js/base.js' %}"></script>
+        {% block extra-JS %}
+        {% endblock  %}
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top" style="z-index: 60;">
@@ -36,12 +39,32 @@
             </div>
         </nav>
 
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar" style="z-index: 50;">
+                    <ul class="nav nav-sidebar">
+                        <li id="project"><a href="/manage/project_manage/">项目管理</a></li>
+                        <li id="module"><a href="/manage/module_manage/">模块管理</a></li>
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li id="case"><a href="/interface/case_manage">用例管理</a></li>
+                        <li id="task"><a href="/interface/task_manage">任务管理</a></li>
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li id="MockServer"><a href="">MockServer</a></li>
+                        <li id="tool"><a href="">测试工具</a></li>
+                    </ul>
+                </div>
+
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
         <div id="dialog-confirm-delete" style="display: none;font-size: 14px;">
             <p>确定要删除 "<span id="delete-target"></span>" 吗？</p>
         </div>
         <div id="dialog-error-tips" style="display: none; font-size: 14px;">
         </div>
-        {% block content %}
-        {% endblock %}
     </body>
 </html>
