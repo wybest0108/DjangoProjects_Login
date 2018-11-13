@@ -14,11 +14,8 @@ def module_manage(request):
 @login_required
 def search_module(request):
     keyword = request.GET.get("keyword", "")
-    if keyword == "":
-        return HttpResponseRedirect("/manage/module_manage/")
-    else:
-        result_list = Module.objects.filter(name__contains=keyword)
-        return render(request, "module_manage.html", {"modules": result_list, "type": "list"})
+    result_list = Module.objects.filter(name__contains=keyword)
+    return render(request, "module_manage.html", {"modules": result_list, "type": "list"})
 
 
 @login_required

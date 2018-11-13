@@ -14,11 +14,8 @@ def project_manage(request):
 @login_required
 def search_project(request):
     keyword = request.GET.get("keyword", "")
-    if keyword == "":
-        return HttpResponseRedirect("/manage/project_manage/")
-    else:
-        result_list = Project.objects.filter(name__contains=keyword)
-        return render(request, "project_manage.html", {"projects": result_list})
+    result_list = Project.objects.filter(name__contains=keyword)
+    return render(request, "project_manage.html", {"projects": result_list})
 
 
 @login_required

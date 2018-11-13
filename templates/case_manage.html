@@ -7,8 +7,8 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h3 class="sub-header">用例列表
                 <div style="overflow: hidden; float:right; font-size: 14px">
-                    <form style="float: left; margin-right: 10px;" action="/manage/search_case/" method="get">
-                        <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
+                    <form style="float: left; margin-right: 10px;" action="/interface/search_case/" method="get">
+                        <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="用例名称" />
                         <input type="submit" class="btn-success" value="搜索" />
                     </form>
                     <button style="float: right" class="btn-success" onclick="window.location.href='/interface/debug_case/'">调试</button>
@@ -58,6 +58,32 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+
+            <!-- 列表分页器 -->
+            <div class="pagination">
+                <span class="step-links">
+                    <ul class="pagination">
+                        {% if cases.has_previous %}
+                            {% if keyword %}
+                                <li><a href="?keyword={{ keyword }}&page={{ cases.previous_page_number }}">&laquo;</a></li>
+                            {% else %}
+                                <li><a href="?page={{ cases.previous_page_number }}">&laquo;</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        <li><a href="#">{{ cases.number }}</a></li>
+
+                        {% if cases.has_next %}
+                            {% if keyword %}
+                                <li><a href="?keyword={{ keyword }}&page={{ cases.next_page_number }}">&raquo;</a></li>
+                            {% else %}
+                                <li><a href="?page={{ cases.next_page_number }}">&raquo;</a></li>
+                            {% endif %}
+                        {% endif %}
+                        <li><a href="#">共：{{ cases.paginator.num_pages }} 页</a></li>
+                    </ul>
+                </span>
             </div>
         </div>
     {% endif %}
