@@ -7,6 +7,20 @@
 
         <div style="width:80%;">
             <form action="/debug/" method="get" class="bs-example bs-example-form" role="form" style="margin-top: 30px">
+                <div class="form-group" style="height: 20px;">
+                    <label>项目：</label>
+                    <select id="project_dropDownMenu" style="width: 200px; font-size: 14px;">
+                        <option value="请选择">--请选择--</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="height: 20px;">
+                    <label>模块：</label>
+                    <select id="module_dropDownMenu" style="width: 200px; font-size: 14px;">
+                        <option value="请选择">--请选择--</option>
+                    </select>
+                </div>
+
                 <div class="input-group">
                     <span class="input-group-addon">名称</span>
                     <input id="req_name" type="text" class="form-control">
@@ -54,7 +68,8 @@
                 </div>
                 <p style="color:#8B8989">说明：以字典的方式设置参数，如：{"id":1, "name":"名称"}</p>
                 <div style="width: 100%; height: 60px;">
-                    <button type="button" class="btn btn-success" id="send" style="float: right;margin-right: 10px;" onclick="caseDebug();">调试</button>
+                    <button type="button" class="btn btn-success" id="save" style="float: right;margin-right: 10px;" onclick="saveCase();">保存</button>
+                    <button type="button" class="btn btn-success" id="send" style="float: right;margin-right: 10px;" onclick="debugCase();">调试</button>
                 </div>
             </form>
         </div>
@@ -64,4 +79,10 @@
             <textarea id="result" class="form-control" rows="10" name="textarea"></textarea>
         </div>
     </fieldset>
+
+    <script type="text/javascript">
+        $(function () {
+            initDropDownMenu();
+        });
+    </script>
 {% endblock %}

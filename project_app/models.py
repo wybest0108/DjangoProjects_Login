@@ -12,7 +12,7 @@ class Project(models.Model):
 
 
 class Module(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name="所属项目")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name="项目")
     name = models.CharField("名称", max_length=100, default="", blank=False, null=False)
     description = models.TextField("描述", default="", blank=True, null=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)

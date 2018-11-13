@@ -11,7 +11,7 @@
                         <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="名称" />
                         <input type="submit" class="btn-success" value="搜索" />
                     </form>
-                    <button style="float: right" class="btn-success" onclick="window.location.href='/interface/case_debug/'">调试</button>
+                    <button style="float: right" class="btn-success" onclick="window.location.href='/interface/debug_case/'">调试</button>
                 </div>
             </h3>
             <div class="table-responsive">
@@ -19,22 +19,40 @@
                     <thead>
                         <tr>
                             <th>名称</th>
-                            <th>所属项目</th>
-                            <th>描述</th>
+                            <th>模块</th>
+                            <th>URL</th>
+                            <th>方法</th>
+                            <th>Headers</th>
+                            <th>参数类型</th>
+                            <th>参数</th>
+                            <th>断言</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for module in modules %}
+                        {% for case in cases %}
                         <tr>
-                            <td>{{ module.name }}</td>
-                            <td>{{ module.project }}</td>
-                            <td>{{ module.description }}</td>
-                            <td>{{ module.create_time | date:"Y-m-d H:i"  }}</td>
+                            <td>{{ case.name }}</td>
+                            <td>{{ case.module }}</td>
+                            <td>{{ case.url }}</td>
+                            <td>{{ case.request_method }}</td>
                             <td>
-                                <a href="/manage/edit_module/{{ module.id }}/">编辑</a>&nbsp;&nbsp;
-                                <a href="javascript:void(0)" onclick='deleteModule("{{ module.name }}", "{{ module.id }}")'>删除</a>
+                                {% if case.request_headers != "{}"%}
+                                    {{ case.request_headers }}
+                                {% endif %}
+                            </td>
+                            <td>{{ case.request_params_type }}</td>
+                            <td>
+                                {% if case.request_params != "{}" %}
+                                    {{ case.request_params }}
+                                {% endif %}
+                            </td>
+                            <td>{{ case.response_assert }}</td>
+                            <td>{{ case.create_time | date:"Y-m-d H:i"  }}</td>
+                            <td>
+                                <a href="/manage/edit_case/{{ case.id }}/">编辑</a>&nbsp;&nbsp;
+                                <a href="javascript:void(0)" onclick='deleteCase("{{ case.name }}", "{{ case.id }}")'>删除</a>
                             </td>
                         </tr>
                         {% endfor %}
