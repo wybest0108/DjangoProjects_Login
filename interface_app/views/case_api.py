@@ -70,18 +70,21 @@ def save_case(request):
         param_type = request.POST.get("paramType", "")
         headers = request.POST.get("headers", "{}")
         params = request.POST.get("params", "{}")
+        assert_text = request.POST.get("assertText", "")
 
         if module_name == "" or name == "" or url == "" or method == "" or param_type == "":
             return response_fail("模块名、用例名、url、请求方法、请求参数类型不能为空！")
 
-        module = Module.objects.get(name=module_name)
-        case = TestCase.objects.create(module=module,
-                                            name=name,
-                                            url=url,
-                                            request_method=method,
-                                            request_headers=headers,
-                                            request_params_type=param_type,
-                                            request_params=params)
+        case = TestCase.objects.create(
+            module=Module.objects.get(name=module_name),
+            name=name,
+            url=url,
+            request_method=method,
+            request_headers=headers,
+            request_params_type=param_type,
+            request_params=params,
+            response_assert=assert_text,
+        )
 
         if case is not None:
             return response_succeed("保存成功！")
@@ -103,6 +106,7 @@ def get_case_info(request, case_id):
         response_data["headers"] = target_case.request_headers
         response_data["paramsType"] = target_case.request_params_type
         response_data["params"] = target_case.request_params
+        response_data["assertText"] = target_case.response_assert
         module = target_case.module
         response_data["moduleName"] = module.name
         response_data["projectName"] = module.project.name
@@ -114,27 +118,51 @@ def get_case_info(request, case_id):
 @login_required
 def update_case(request, case_id):
     if request.method == "POST":
-        url = request.POST.get("url")
-        method = request.POST.get("method")
-        param_type = request.POST.get("paramType")
-        headers = json.loads(request.POST.get("headers").replace("'", "\""))
-        params = json.loads(request.POST.get("params").replace("'", "\""))
-        if method == "get":
-            r = requests.get(url, params=params, headers=headers)
+        module_name = request.POST.get("moduleName", "")
+        name = request.POST.get("name", "")
+        url = request.POST.get("url", "")
+        method = request.POST.get("method", "").upper()
+        param_type = request.POST.get("paramType", "")
+        headers = request.POST.get("headers", "{}")
+        params = request.POST.get("params", "{}")
+        assert_text = request.POST.get("assertText", "")
 
-        if method == "post":
-            if param_type == "form-data":
-                r = requests.post(url, data=params, headers=headers)
-            if param_type == "json":
-                r = requests.post(url, json=params, headers=headers)
+        if module_name == "" or name == "" or url == "" or method == "" or param_type == "":
+            return response_fail("模块名、用例名、url、请求方法、请求参数类型不能为空！")
 
-        return HttpResponse(r.text)
-    else:
-        if case_id:
-            target_case = TestCase.objects.get(id=case_id)
-            return render(request, "edit_case.html", {
-                "case": target_case,
-                "type": "edit"
-            })
+        case = TestCase.objects.filter(id=case_id).update(
+            module=Module.objects.get(name=module_name),
+            name=name,
+            url=url,
+            request_method=method,
+            request_headers=headers,
+            request_params_type=param_type,
+            request_params=params,
+            response_assert=assert_text,
+        )
+
+        if case == 1:
+            return response_succeed("更新成功！")
         else:
-            return HttpResponse("404")
+            response_fail("更新失败！")
+    else:
+        return response_fail("该接口只支持POST请求！")
+
+
+@login_required
+def assert_result(request):
+    if request.method == "POST":
+        response_result = request.POST.get("response_result", "")
+        assert_text = request.POST.get("assert_text", "")
+
+        if response_result == "" or assert_text == "":
+            return response_fail("验证数据或者响应结果不能为空！")
+
+        try:
+            assert assert_text in response_result
+        except AssertionError:
+            return response_fail("验证失败！")
+        else:
+            return response_succeed("验证成功！")
+    else:
+        return response_fail("该接口只支持POST请求！")

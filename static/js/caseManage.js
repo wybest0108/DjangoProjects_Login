@@ -79,19 +79,14 @@ function debugCase() {
         data: requestData,
         async:false,        //IE浏览器必须设为false，否则会报错
         success: function(data) {
-            //$("#result").html(data);
-            if(data.success == "true") {
-                $("#result").text(data.data);
-            }
-            else {
-                showTips(data.message);
-            }
+            //$("#result").html(data.data);
+            data.success == "true"? $("#result").text(data.data) : showTips(data.message);
         }
     });
 }
 
 
-function saveCase() {
+function saveCase(type, id) {
     var requestData = {
         "name": $("#req_name").val(),
         "url": $("#req_url").val(),
@@ -99,14 +94,16 @@ function saveCase() {
         "paramType": $("input[name='req_type']:checked").val(),
         "headers": $("#req_header").val() === ""? "{}" : $("#req_header").val(),
         "params": $("#req_parameter").val() === ""? "{}" : $("#req_parameter").val(),
-        "moduleName": $("#module_dropDownMenu").val()
+        "moduleName": $("#module_dropDownMenu").val(),
+        "assertText": $("#assert_text").val()
     };
 
     if(!isRequestDataValid(requestData, true)) return false;
+    if(type == "update" && typeof(id) == "undefined")   showTips("没有指定用例ID");
 
     $.ajax({
         type: "post",
-        url: "/interface/save_case/",
+        url: type == "update"? "/interface/update_case/" + id + "/" : "/interface/save_case/",
         data: requestData,
         async:false,        //IE浏览器必须设为false，否则会报错
         success: function(data) {
@@ -114,6 +111,30 @@ function saveCase() {
         }
     });
 }
+
+function assertResult() {
+    var responseResult = $("#result").val(),
+        assertText = $("#assert_text").val();
+
+    if(responseResult === "" || assertText === "") {
+        showTips("验证数据或者响应结果不能为空！");
+        return;
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/interface/assert_result/",
+        data: {
+            "response_result": responseResult,
+            "assert_text": assertText
+        },
+        async:false,        //IE浏览器必须设为false，否则会报错
+        success: function(data) {
+            showTips(data.message);
+        }
+    });
+}
+
 
 function deleteCase(name, id){
     deleteConfirmDialog(name, "/interface/delete_case/" + id + "/");
@@ -178,6 +199,7 @@ function initTestCase(data) {
     $("#req_url").val(data.url);
     $("#req_header").val((data.headers === "{}")? "" : data.headers);
     $("#req_parameter").val((data.params === "{}")? "" : data.params);
+    $("#assert_text").val(data.assertText);
 
     data.method === "GET"? $("#get").prop("checked", true) : $("#post").prop("checked", true);
     data.paramsType === "JSON"? $("#json").prop("checked", true) : $("#form").prop("checked", true);

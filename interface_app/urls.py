@@ -13,7 +13,6 @@ urlpatterns = [
     path("get_projects_and_modules/", case_api.get_projects_and_modules),
     path("save_case/", case_api.save_case),
     path("get_case_info/<int:case_id>/", case_api.get_case_info),
-    # path("delete_case/<int:case_id>/", case_views.delete_case),
-    # path("edit_case/<int:case_id>/", case_views.edit_case),
-
+    path("assert_result/", case_api.assert_result),
+    path("update_case/<int:case_id>/", case_api.update_case),
 ]
