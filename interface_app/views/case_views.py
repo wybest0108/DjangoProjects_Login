@@ -53,7 +53,7 @@ def search_case(request):
 @login_required
 def add_case(request):
     if request.method == "GET":
-        return render(request, "add_case.html", {
+        return render(request, "test_case.html", {
             "type": "add"
         })
     else:
@@ -62,8 +62,9 @@ def add_case(request):
 
 @login_required
 def edit_case(request, case_id):
+    print(case_id)
     if request.method == "GET":
-        return render(request, "edit_case.html", {
+        return render(request, "test_case.html", {
             "type": "edit"
         })
     else:

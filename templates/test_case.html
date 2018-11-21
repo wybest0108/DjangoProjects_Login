@@ -1,12 +1,19 @@
 {% extends "case_manage.html" %}
-{% block edit_case %}
+{% block test_case %}
     <fieldset>
         <div id="legend" style="width:80%;">
-            <legend style="font-size: 24px; margin-top: 20px; margin-bottom: 10px;">编辑用例</legend>
+            <legend style="font-size: 24px; margin-top: 20px; margin-bottom: 10px;">
+                {% if type == "add" %}
+                    新增用例
+                {% endif %}
+                {% if type == "edit" %}
+                    编辑用例
+                {% endif %}
+            </legend>
         </div>
 
         <div style="width:80%;">
-            <form action="/debug/" method="get" class="bs-example bs-example-form" role="form" style="margin-top: 30px">
+            <form class="bs-example bs-example-form" role="form" style="margin-top: 30px">
                 <div class="form-group" style="height: 20px;">
                     <label>项目：</label>
                     <select id="project_dropDownMenu" style="width: 200px; font-size: 14px;">
@@ -36,10 +43,10 @@
                 <div>
                     <label>请求方法：</label>
                     <label class="radio-inline">
-                        <input type="radio" name="req_method" id="get" value="get" checked > GET
+                        <input type="radio" name="req_method" id="get" value="get" checked> GET
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="req_method" id="post" value="post" checked> POST
+                        <input type="radio" name="req_method" id="post" value="post"> POST
                     </label>
                 </div>
 
@@ -90,13 +97,27 @@
 
     <script type="text/javascript">
         $(function () {
-            var currPaths = window.location.pathname.split("/"),
-                id = currPaths[currPaths.length - 2];
-            getTestCaseInfoById(id);
+            var currPathName = window.location.pathname;
 
-            $("#save").click(function () {
-                saveCase("update", id);
-            });
+            //新增页面
+            if(currPathName.indexOf("add") != -1) {
+                initDropDownMenu();
+                $("#save").click(function () {
+                    saveCase("add");
+                });
+                return;
+            }
+
+            //编辑页面
+            if(currPathName.indexOf("edit") != -1) {
+                var paths = currPathName.split("/"),
+                    id = paths[paths.length - 2];
+
+                getTestCaseInfoById(id);
+                $("#save").click(function () {
+                    saveCase("update", id);
+                });
+            }
         });
     </script>
 {% endblock %}

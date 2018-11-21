@@ -87,19 +87,14 @@
             </div>
         </div>
     {% endif %}
-    {% if type == "add" %}
+
+    {% if type == "add" or type == "edit" %}
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% block add_case %}
+            {% block test_case %}
             {% endblock %}
         </div>
     {% endif %}
 
-    {% if type == "edit" %}
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% block edit_case %}
-            {% endblock %}
-        </div>
-    {% endif %}
 {% endblock %}
 
 {% block extra-JS %}
