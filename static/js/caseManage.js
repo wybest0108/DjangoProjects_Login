@@ -1,10 +1,16 @@
-function initDropDownMenu() {
+function initDropDownMenu(defaultProjectName, defaultModuleName) {
     $.ajax({
         type: "get",
         url: "/interface/get_projects_and_modules/",
         dataType: "json",
         success: function(data) {
-            createProjectDropDownMenu(data);
+            if(data.success == "true") {
+                createProjectDropDownMenu(data.data.projects, defaultProjectName);
+                updateModuleDropDownMenu(defaultModuleName);
+            }
+            else {
+                showTips(data.message);
+            }
         }
     });
 
@@ -13,9 +19,8 @@ function initDropDownMenu() {
     });
 }
 
-function createProjectDropDownMenu(data) {
-    var projects = data.projects,
-        projectDropDownMenu = $("#project_dropDownMenu")[0];
+function createProjectDropDownMenu(projects, defaultProjectName) {
+    var projectDropDownMenu = $("#project_dropDownMenu")[0];
 
     projectDropDownMenu.options.length = 0;
     projectDropDownMenu.options.add(new Option("--请选择--", "请选择"));
@@ -24,9 +29,12 @@ function createProjectDropDownMenu(data) {
         projectDropDownMenu.options.add(option);
         option.moduleNames = typeof(projects[i].moduleNames) == "undefined"? [] : projects[i].moduleNames;
     }
+    if(typeof(defaultProjectName) != "undefined") {
+        setDropDownMenuDefault(projectDropDownMenu, defaultProjectName);
+    }
 }
 
-function updateModuleDropDownMenu() {
+function updateModuleDropDownMenu(defaultModuleName) {
     var projectDropDownMenu = $("#project_dropDownMenu")[0],
         moduleDropDownMenu = $("#module_dropDownMenu")[0],
         selectedIndex = projectDropDownMenu.selectedIndex;
@@ -38,6 +46,18 @@ function updateModuleDropDownMenu() {
     var moduleNames = projectDropDownMenu.options[selectedIndex].moduleNames;
     for(var i = 0, len = moduleNames.length; i < len; ++i) {
         moduleDropDownMenu.options.add(new Option(moduleNames[i], moduleNames[i]));
+    }
+
+    if(typeof(defaultModuleName) != "undefined") {
+        setDropDownMenuDefault(moduleDropDownMenu, defaultModuleName);
+    }
+}
+
+function setDropDownMenuDefault(dropDownMenuObj, defaultValue) {
+    for(var i = 0, len = dropDownMenuObj.options.length; i < len; ++i) {
+        if(dropDownMenuObj.options[i].value == defaultValue) {
+            dropDownMenuObj.selectedIndex = i;
+        }
     }
 }
 
@@ -60,7 +80,12 @@ function debugCase() {
         async:false,        //IE浏览器必须设为false，否则会报错
         success: function(data) {
             //$("#result").html(data);
-            $("#result").text(data);
+            if(data.success == "true") {
+                $("#result").text(data.data);
+            }
+            else {
+                showTips(data.message);
+            }
         }
     });
 }
@@ -136,3 +161,28 @@ function showTips(data){
         }
     });
 }
+
+function getTestCaseInfoById(id) {
+    $.ajax({
+        type: "get",
+        url: "/interface/get_case_info/" + id + "/",
+        dataType: "json",
+        success: function(data) {
+            (data.success == "true")? initTestCase(data.data) : showTips(data.message);
+        }
+    });
+}
+
+function initTestCase(data) {
+    $("#req_name").val(data.name);
+    $("#req_url").val(data.url);
+    $("#req_header").val((data.headers === "{}")? "" : data.headers);
+    $("#req_parameter").val((data.params === "{}")? "" : data.params);
+
+    data.method === "GET"? $("#get").prop("checked", true) : $("#post").prop("checked", true);
+    data.paramsType === "JSON"? $("#json").prop("checked", true) : $("#form").prop("checked", true);
+
+    initDropDownMenu(data.projectName, data.moduleName);
+}
+
+

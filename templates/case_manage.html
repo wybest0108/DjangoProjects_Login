@@ -11,7 +11,7 @@
                         <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="用例名称" />
                         <input type="submit" class="btn-success" value="搜索" />
                     </form>
-                    <button style="float: right" class="btn-success" onclick="window.location.href='/interface/debug_case/'">调试</button>
+                    <button style="float: right" class="btn-success" onclick="window.location.href='/interface/add_case/'">新增</button>
                 </div>
             </h3>
             <div class="table-responsive">
@@ -51,7 +51,7 @@
                             <td>{{ case.response_assert }}</td>
                             <td>{{ case.create_time | date:"Y-m-d H:i"  }}</td>
                             <td>
-                                <a href="/manage/edit_case/{{ case.id }}/">编辑</a>&nbsp;&nbsp;
+                                <a href="/interface/edit_case/{{ case.id }}/">编辑</a>&nbsp;&nbsp;
                                 <a href="javascript:void(0)" onclick='deleteCase("{{ case.name }}", "{{ case.id }}")'>删除</a>
                             </td>
                         </tr>
@@ -87,9 +87,16 @@
             </div>
         </div>
     {% endif %}
-    {% if type == "debug" %}
+    {% if type == "add" %}
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% block api_debug %}
+            {% block add_case %}
+            {% endblock %}
+        </div>
+    {% endif %}
+
+    {% if type == "edit" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block edit_case %}
             {% endblock %}
         </div>
     {% endif %}

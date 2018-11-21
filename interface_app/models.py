@@ -10,7 +10,7 @@ class TestCase(models.Model):
     request_headers = models.TextField("Headers", default="", blank=True, null=True)
     request_params_type = models.CharField("参数类型", max_length=10, default="form-data", blank=False, null=False)
     request_params = models.TextField("参数", default="", blank=True, null=True)
-    response_assert = models.TextField("断言", default="", blank=True, null=True)
+    response_assert = models.TextField("验证", default="", blank=True, null=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
 
     def __str__(self):

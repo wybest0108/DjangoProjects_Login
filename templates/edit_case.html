@@ -1,8 +1,8 @@
 {% extends "case_manage.html" %}
-{% block api_debug %}
+{% block edit_case %}
     <fieldset>
         <div id="legend" style="width:80%;">
-            <legend style="font-size: 24px; margin-top: 20px; margin-bottom: 10px;">在线调试</legend>
+            <legend style="font-size: 24px; margin-top: 20px; margin-bottom: 10px;">编辑用例</legend>
         </div>
 
         <div style="width:80%;">
@@ -30,24 +30,23 @@
                 <div class="input-group">
                     <span class="input-group-addon">URL</span>
                     <input id="req_url" type="text" class="form-control">
-                    <p id="url-error-tip" style="padding-left: 6px; color:#F00"></p>
                 </div>
                 <br>
 
                 <div>
                     <label>请求方法：</label>
                     <label class="radio-inline">
-                        <input type="radio" name="req_method" id="get" value="get" checked> GET
+                        <input type="radio" name="req_method" id="get" value="get" checked > GET
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="req_method" id="post" value="post"> POST
+                        <input type="radio" name="req_method" id="post" value="post" checked> POST
                     </label>
                 </div>
 
                 <div style="margin-top: 10px;">
                     <label>参数类型：</label>
                     <label class="radio-inline">
-                        <input type="radio" name="req_type" id="from" value="form-data" checked> form-data
+                        <input type="radio" name="req_type" id="form" value="form-data" checked> form-data
                     </label>
                     <label class="radio-inline">
                         <input type="radio" name="req_type" id="json" value="json"> JSON
@@ -82,7 +81,9 @@
 
     <script type="text/javascript">
         $(function () {
-            initDropDownMenu();
+            var currPaths = window.location.pathname.split("/"),
+                id = currPaths[currPaths.length - 2];
+            getTestCaseInfoById(id);
         });
     </script>
 {% endblock %}
