@@ -21,14 +21,14 @@ function initDropDownMenu(defaultProjectName, defaultModuleName) {
 
 function createProjectDropDownMenu(projects, defaultProjectName) {
     var projectDropDownMenu = $("#project_dropDownMenu")[0],
-		projectNames = [];
+        projectNames = [];
 	
     for(var i = 0, len = projects.length; i < len; ++i) {
-		projectNames.push(projects[i].projectName);
+        projectNames.push(projects[i].projectName);
     }
-	createDropDwonMenu(projectDropDownMenu, projectNames, defaultProjectName);
+    createDropDwonMenu(projectDropDownMenu, projectNames, defaultProjectName);
 
-	projectDropDownMenu.options[0].moduleNames = [];			//第一个option为："--请选择--"
+    projectDropDownMenu.options[0].moduleNames = [];			//第一个option为："--请选择--"
     for(var i = 1, len = projectDropDownMenu.options.length; i < len; ++i) {
         projectDropDownMenu.options[i].moduleNames = typeof(projects[i - 1].moduleNames) == "undefined"? [] : projects[i - 1].moduleNames;
     }
@@ -40,25 +40,24 @@ function updateModuleDropDownMenu(defaultModuleName) {
         selectedIndex = projectDropDownMenu.selectedIndex;
 
     var moduleNames = projectDropDownMenu.options[selectedIndex].moduleNames;
-	createDropDwonMenu(moduleDropDownMenu, moduleNames, defaultModuleName)
+    createDropDwonMenu(moduleDropDownMenu, moduleNames, defaultModuleName)
 }
 
-
 function createDropDwonMenu(dropDownMenuObj, optionValues, defaultValue) {
-	dropDownMenuObj.options.length = 0;
-	dropDownMenuObj.options.add(new Option("--请选择--", "请选择"));
+    dropDownMenuObj.options.length = 0;
+    dropDownMenuObj.options.add(new Option("--请选择--", "请选择"));
 	
-	for(var i = 0, len = optionValues.length; i < len; ++i) {
-		dropDownMenuObj.options.add(new Option(optionValues[i], optionValues[i]));
-	}
+    for(var i = 0, len = optionValues.length; i < len; ++i) {
+        dropDownMenuObj.options.add(new Option(optionValues[i], optionValues[i]));
+    }
 	
-	if(typeof(defaultValue) != "undefined") {
-		for(var i = 0, len = dropDownMenuObj.options.length; i < len; ++i) {
-			if(dropDownMenuObj.options[i].value === defaultValue) {
-				dropDownMenuObj.selectedIndex = i;
-			}
-		}
-	}
+    if(typeof(defaultValue) != "undefined") {
+        for(var i = 0, len = dropDownMenuObj.options.length; i < len; ++i) {
+            if(dropDownMenuObj.options[i].value === defaultValue) {
+                dropDownMenuObj.selectedIndex = i;
+            }
+        }
+    }
 }
 
 function debugCase() {
