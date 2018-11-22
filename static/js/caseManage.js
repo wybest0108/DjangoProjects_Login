@@ -20,17 +20,17 @@ function initDropDownMenu(defaultProjectName, defaultModuleName) {
 }
 
 function createProjectDropDownMenu(projects, defaultProjectName) {
-    var projectDropDownMenu = $("#project_dropDownMenu")[0];
-
-    projectDropDownMenu.options.length = 0;
-    projectDropDownMenu.options.add(new Option("--请选择--", "请选择"));
+    var projectDropDownMenu = $("#project_dropDownMenu")[0],
+		projectNames = [];
+	
     for(var i = 0, len = projects.length; i < len; ++i) {
-        var option = new Option(projects[i].projectName, projects[i].projectName);
-        projectDropDownMenu.options.add(option);
-        option.moduleNames = typeof(projects[i].moduleNames) == "undefined"? [] : projects[i].moduleNames;
+		projectNames.push(projects[i].projectName);
     }
-    if(typeof(defaultProjectName) != "undefined") {
-        setDropDownMenuDefault(projectDropDownMenu, defaultProjectName);
+	createDropDwonMenu(projectDropDownMenu, projectNames, defaultProjectName);
+
+	projectDropDownMenu.options[0].moduleNames = [];			//第一个option为："--请选择--"
+    for(var i = 1, len = projectDropDownMenu.options.length; i < len; ++i) {
+        projectDropDownMenu.options[i].moduleNames = typeof(projects[i - 1].moduleNames) == "undefined"? [] : projects[i - 1].moduleNames;
     }
 }
 
@@ -39,26 +39,26 @@ function updateModuleDropDownMenu(defaultModuleName) {
         moduleDropDownMenu = $("#module_dropDownMenu")[0],
         selectedIndex = projectDropDownMenu.selectedIndex;
 
-    moduleDropDownMenu.options.length = 0;
-    moduleDropDownMenu.options.add(new Option("--请选择--", "请选择"));
-
-    if(selectedIndex == 0 ) return;
     var moduleNames = projectDropDownMenu.options[selectedIndex].moduleNames;
-    for(var i = 0, len = moduleNames.length; i < len; ++i) {
-        moduleDropDownMenu.options.add(new Option(moduleNames[i], moduleNames[i]));
-    }
-
-    if(typeof(defaultModuleName) != "undefined") {
-        setDropDownMenuDefault(moduleDropDownMenu, defaultModuleName);
-    }
+	createDropDwonMenu(moduleDropDownMenu, moduleNames, defaultModuleName)
 }
 
-function setDropDownMenuDefault(dropDownMenuObj, defaultValue) {
-    for(var i = 0, len = dropDownMenuObj.options.length; i < len; ++i) {
-        if(dropDownMenuObj.options[i].value == defaultValue) {
-            dropDownMenuObj.selectedIndex = i;
-        }
-    }
+
+function createDropDwonMenu(dropDownMenuObj, optionValues, defaultValue) {
+	dropDownMenuObj.options.length = 0;
+	dropDownMenuObj.options.add(new Option("--请选择--", "请选择"));
+	
+	for(var i = 0, len = optionValues.length; i < len; ++i) {
+		dropDownMenuObj.options.add(new Option(optionValues[i], optionValues[i]));
+	}
+	
+	if(typeof(defaultValue) != "undefined") {
+		for(var i = 0, len = dropDownMenuObj.options.length; i < len; ++i) {
+			if(dropDownMenuObj.options[i].value === defaultValue) {
+				dropDownMenuObj.selectedIndex = i;
+			}
+		}
+	}
 }
 
 function debugCase() {
