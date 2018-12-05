@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>任务管理</title>
+{% endblock %}
+{% block content %}
+    {% if type == "list" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h3 class="sub-header">任务列表
+                <div style="overflow: hidden; float:right; font-size: 14px">
+                    <form style="float: left; margin-right: 10px;" action="/interface/search_task/" method="get">
+                        <input style="color: #999;border-radius:3px;border: 1px solid #ccc" type="text" name="keyword" placeholder="用例名称" />
+                        <input type="submit" class="btn-success" value="搜索" />
+                    </form>
+                    <button style="float: right" class="btn-success" onclick="window.location.href='/interface/add_task/'">新增</button>
+                </div>
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>描述</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.description }}</td>
+                            <td>
+                                {% if task.status == 0 %}
+                                    未执行
+                                {% elif task.status == 1 %}
+                                    执行中
+                                {% elif task.status == 2 %}
+                                    已执行
+                                {% endif %}
+                            </td>
+                            <td>{{ task.create_time | date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="/interface/edit_task/{{ task.id }}/">编辑</a>&nbsp;&nbsp;
+                                <a href="javascript:void(0)" onclick='deleteTask("{{ task.name }}", "{{ task.id }}")'>删除</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 列表分页器 -->
+            <div class="pagination">
+                <span class="step-links">
+                    <ul class="pagination">
+                        {% if tasks.has_previous %}
+                            {% if keyword %}
+                                <li><a href="?keyword={{ keyword }}&page={{ tasks.previous_page_number }}">&laquo;</a></li>
+                            {% else %}
+                                <li><a href="?page={{ tasks.previous_page_number }}">&laquo;</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        <li><a href="javascript:void(0)">{{ tasks.number }}</a></li>
+
+                        {% if tasks.has_next %}
+                            {% if keyword %}
+                                <li><a href="?keyword={{ keyword }}&page={{ tasks.next_page_number }}">&raquo;</a></li>
+                            {% else %}
+                                <li><a href="?page={{ tasks.next_page_number }}">&raquo;</a></li>
+                            {% endif %}
+                        {% endif %}
+                        <li><a href="javascript:void(0)">共：{{ tasks.paginator.num_pages }} 页</a></li>
+                    </ul>
+                </span>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if type == "add" or type == "edit" %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block test_task %}
+            {% endblock %}
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra-JS %}
+    {% load static %}
+    <link href="{% static 'zTreePlugin/css/zTreeStyle/zTreeStyle.css' %}" rel="stylesheet">
+    <script src="{% static 'zTreePlugin/js/jquery.ztree.all.min.js' %}"></script>
+    <script src="{% static 'js/taskManage.js' %}"></script>
+{% endblock  %}

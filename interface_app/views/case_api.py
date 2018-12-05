@@ -1,6 +1,4 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from interface_app.models import TestCase
 from project_app.models import Project, Module
 from test_platform.common import response_succeed, response_fail
@@ -14,8 +12,11 @@ def debug_case(request):
         url = request.POST.get("url", "")
         method = request.POST.get("method", "").upper()
         param_type = request.POST.get("paramType", "").upper()
-        headers = json.loads(request.POST.get("headers").replace("'", "\""))
-        params = json.loads(request.POST.get("params").replace("'", "\""))
+        try:
+            headers = json.loads(request.POST.get("headers", "{}").replace("'", "\""))
+            params = json.loads(request.POST.get("params", "{}").replace("'", "\""))
+        except json.decoder.JSONDecodeError:
+            return response_fail("Header或参数格式不符合要求！")
 
         if url == "" or method == "" or param_type == "":
             return response_fail("URL、请求方法、请求参数类型不能为空！")
@@ -166,3 +167,112 @@ def assert_result(request):
             return response_succeed("验证成功！")
     else:
         return response_fail("该接口只支持POST请求！")
+
+# 方法一：
+# @login_required
+# def get_cases_for_ztree(request):
+#     if request.method == "GET":
+#         ztree_nodes = [
+#             {
+#                 "zId": 0,
+#                 "name": "可选用例",
+#                 "open": "true"
+#             }
+#         ]
+#         num = 0
+#         project_all = Project.objects.all()
+#         for project in project_all:
+#             is_project_node_added = False
+#             modules = Module.objects.filter(project_id=project.id)
+#
+#             for module in modules:
+#                 is_module_node_added = False
+#                 cases = TestCase.objects.filter(module_id=module.id)
+#
+#                 for case in cases:
+#                     if is_project_node_added == False:
+#                         num += 1
+#                         pid = num
+#                         znode = {}
+#                         znode["zId"] = num
+#                         znode["pId"] = 0
+#                         znode["name"] = project.name
+#                         ztree_nodes.append(znode)
+#                         is_project_node_added = True
+#
+#                     if is_module_node_added == False:
+#                         num += 1
+#                         pid_1 = num
+#                         znode_1 = {}
+#                         znode_1["zId"] = num
+#                         znode_1["pId"] = pid
+#                         znode_1["name"] = module.name
+#                         ztree_nodes.append(znode_1)
+#                         is_module_node_added = True
+#
+#                     num += 1
+#                     znode_2 = {}
+#                     znode_2["zId"] = num
+#                     znode_2["pId"] = pid_1
+#                     znode_2["name"] = case.name
+#                     znode_2["caseId"] = case.id
+#                     ztree_nodes.append(znode_2)
+#
+#         return response_succeed(data=ztree_nodes)
+#     else:
+#         return response_fail("该接口只支持GET请求！")
+
+# 方法二：
+@login_required
+def get_cases_for_ztree(request):
+    if request.method == "GET":
+        ztree_nodes = [
+            {
+                "zId": 0,
+                "name": "可选用例",
+                "open": "true"
+            }
+        ]
+        num = 0
+        project_dict = {}
+        module_dict = {}
+
+        case_all = TestCase.objects.all()
+        for case in case_all:
+            project_name = case.module.project.name
+            if project_name not in project_dict:
+                num += 1
+                pid = num
+                znode = {}
+                znode["zId"] = num
+                znode["pId"] = 0
+                znode["name"] = project_name
+                ztree_nodes.append(znode)
+                project_dict[project_name] = pid
+            else:
+                pid = project_dict[project_name]
+
+            module_name = case.module.name
+            if module_name not in module_dict:
+                num += 1
+                pid_1 = num
+                znode_1 = {}
+                znode_1["zId"] = num
+                znode_1["pId"] = pid
+                znode_1["name"] = module_name
+                ztree_nodes.append(znode_1)
+                module_dict[module_name] = pid_1
+            else:
+                pid_1 = module_dict[module_name]
+
+            num += 1
+            znode_2 = {}
+            znode_2["zId"] = num
+            znode_2["pId"] = pid_1
+            znode_2["name"] = case.name
+            znode_2["caseId"] = case.id
+            ztree_nodes.append(znode_2)
+
+        return response_succeed(data=ztree_nodes)
+    else:
+        return response_fail("该接口只支持GET请求！")

@@ -72,7 +72,7 @@
                             {% endif %}
                         {% endif %}
 
-                        <li><a href="#">{{ cases.number }}</a></li>
+                        <li><a href="javascript:void(0)">{{ cases.number }}</a></li>
 
                         {% if cases.has_next %}
                             {% if keyword %}
@@ -81,7 +81,7 @@
                                 <li><a href="?page={{ cases.next_page_number }}">&raquo;</a></li>
                             {% endif %}
                         {% endif %}
-                        <li><a href="#">共：{{ cases.paginator.num_pages }} 页</a></li>
+                        <li><a href="javascript:void(0)">共：{{ cases.paginator.num_pages }} 页</a></li>
                     </ul>
                 </span>
             </div>

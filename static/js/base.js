@@ -35,3 +35,29 @@ function deleteConfirmDialog(text, url) {
         }
     });
 }
+
+
+function showTips(data){
+    $("#dialog-tips").html(data);
+    $("#dialog-tips").dialog({
+        autoOpen: true,
+        modal: true,
+        resizable: false,
+        width: 350,
+        height: 220,
+        title: "提示信息",
+        position: {
+            using: function (pos) {
+                var topOffset = $(this).css(pos).offset().top;
+                if (topOffset = 0||topOffset>0) {
+                    $(this).css('top', ($(window).height() - 200) / 2);
+                }
+            }
+        },
+        buttons:{
+            '确定':function(){
+                 $(this).dialog("close");
+            }
+        }
+    });
+}
