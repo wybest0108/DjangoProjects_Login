@@ -63,6 +63,16 @@ def add_task(request):
 
 
 @login_required
+def edit_task(request, task_id):
+    if request.method == "GET":
+        return render(request, "test_task.html", {
+            "type": "edit"
+        })
+    else:
+        return HttpResponse("404")
+
+
+@login_required
 def delete_task(request, task_id):
     TestTask.objects.get(id=task_id).delete()
     return HttpResponseRedirect("/interface/task_manage/")

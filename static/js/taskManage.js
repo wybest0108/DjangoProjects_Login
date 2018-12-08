@@ -11,11 +11,11 @@ function initZTree() {
         dataType: "json",
         success: function(data) {
             if(data.success == "true") {
-                initZTreeOfAllCases(data.data);
-                initZTreeOfSelectedCases();
+                initZTreeOfAllCases(data.data.ztreeNodesForAllCases);
+                initZTreeOfSelectedCases(data.data.ztreeNodesForSelectedCases);
             }
             else {
-                //showTips(data.message);
+                showTips(data.message);
             }
         }
     });
@@ -48,7 +48,7 @@ function initZTreeOfAllCases(zNodes) {
 }
 
 //初始化“已选用例树”
-function initZTreeOfSelectedCases() {
+function initZTreeOfSelectedCases(zNodes) {
     var setting = {
         view: {
             selectedMulti: true,
@@ -69,15 +69,6 @@ function initZTreeOfSelectedCases() {
             chkboxType: { "Y": "ps", "N": "ps" }
         }
     };
-
-    var zNodes = [
-        {
-            zId: 0,
-            name: "已选用例",
-            open: true,
-            checked: true
-        }
-    ];
     $.fn.zTree.init($("#ztree_selected_cases"), setting, zNodes);
 }
 
@@ -86,7 +77,7 @@ function initZTreeOfSelectedCases() {
 function onCheckForZTreeOfAllCases(e, treeId, treeNode) {
     var zTreeObjOfSelectedCases = $.fn.zTree.getZTreeObj("ztree_selected_cases"),
         level = treeNode.level,
-        rootNode = zTreeObjOfSelectedCases.getNodeByParam("zId", 0, null);
+        rootNode = zTreeObjOfSelectedCases.getNodeByParam("UID", "0_0_0", null);
 
     if(treeNode.checked) {
         switch (level) {
@@ -95,7 +86,7 @@ function onCheckForZTreeOfAllCases(e, treeId, treeNode) {
                 zTreeObjOfSelectedCases.addNodes(rootNode, treeNode.children);
                 break;
             case 1:
-                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("zId", treeNode.zId, null);
+                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("UID", treeNode.UID, null);
                 if(!!targetProjectNode) {
                     zTreeObjOfSelectedCases.removeNode(targetProjectNode);
                 }
@@ -103,13 +94,13 @@ function onCheckForZTreeOfAllCases(e, treeId, treeNode) {
                 break;
             case 2:
                 var srcProjectNode = treeNode.getParentNode();
-                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("zId", srcProjectNode.zId, null),
-                    targetModuleNode = zTreeObjOfSelectedCases.getNodeByParam("zId", treeNode.zId, null);
+                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("UID", srcProjectNode.UID, null),
+                    targetModuleNode = zTreeObjOfSelectedCases.getNodeByParam("UID", treeNode.UID, null);
                 if(!!targetModuleNode) {
                     zTreeObjOfSelectedCases.removeNode(targetModuleNode);
                 }
                 if(!targetProjectNode) {
-                    targetProjectNode = zTreeObjOfSelectedCases.addNodes(rootNode, {zId: srcProjectNode.zId, pId: srcProjectNode.pId, name: srcProjectNode.name, checked: true })[0];
+                    targetProjectNode = zTreeObjOfSelectedCases.addNodes(rootNode, {zId: srcProjectNode.zId, pId: srcProjectNode.pId, name: srcProjectNode.name, checked: true, UID: srcProjectNode.UID })[0];
                 }
                 zTreeObjOfSelectedCases.addNodes(targetProjectNode, treeNode);
                 break;
@@ -117,21 +108,22 @@ function onCheckForZTreeOfAllCases(e, treeId, treeNode) {
                 var srcModuleNode = treeNode.getParentNode(),
                     srcProjectNode = srcModuleNode.getParentNode();
 
-                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("zId", srcProjectNode.zId, null),
-                    targetModuleNode = zTreeObjOfSelectedCases.getNodeByParam("zId", srcModuleNode.zId, null);
+                var targetProjectNode = zTreeObjOfSelectedCases.getNodeByParam("UID", srcProjectNode.UID, null),
+                    targetModuleNode = zTreeObjOfSelectedCases.getNodeByParam("UID", srcModuleNode.UID, null);
 
                 if(!targetProjectNode) {
-                    targetProjectNode = zTreeObjOfSelectedCases.addNodes(rootNode, {zId: srcProjectNode.zId, pId: srcProjectNode.pId, name: srcProjectNode.name, checked: true })[0];
+                    targetProjectNode = zTreeObjOfSelectedCases.addNodes(rootNode, {zId: srcProjectNode.zId, pId: srcProjectNode.pId, name: srcProjectNode.name, checked: true, UID: srcProjectNode.UID })[0];
                 }
                 if(!targetModuleNode) {
-                    targetModuleNode = zTreeObjOfSelectedCases.addNodes(targetProjectNode, {zId: srcModuleNode.zId, pId: srcModuleNode.pId, name: srcModuleNode.name, checked: true })[0];
+                    targetModuleNode = zTreeObjOfSelectedCases.addNodes(targetProjectNode, {zId: srcModuleNode.zId, pId: srcModuleNode.pId, name: srcModuleNode.name, checked: true, UID: srcModuleNode.UID })[0];
                 }
                 zTreeObjOfSelectedCases.addNodes(targetModuleNode, treeNode);
                 break;
         }
+        zTreeObjOfSelectedCases.checkNode(rootNode, true, false);
     }
     else {
-        removeNodes(zTreeObjOfSelectedCases, zTreeObjOfSelectedCases.getNodeByParam("zId", treeNode.zId, null));
+        removeNodes(zTreeObjOfSelectedCases, zTreeObjOfSelectedCases.getNodeByParam("UID", treeNode.UID, null));
     }
 }
 
@@ -140,7 +132,7 @@ function onCheckForZTreeOfSelectedCases(e, treeId, treeNode) {
     var zTreeObjOfSelectedCases = $.fn.zTree.getZTreeObj("ztree_selected_cases"),
         zTreeObjOfAllCases = $.fn.zTree.getZTreeObj("ztree_all_cases");
     if(!treeNode.checked) {
-        zTreeObjOfAllCases.checkNode(zTreeObjOfAllCases.getNodeByParam("zId", treeNode.zId, null), false, true);
+        zTreeObjOfAllCases.checkNode(zTreeObjOfAllCases.getNodeByParam("UID", treeNode.UID, null), false, true);
         removeNodes(zTreeObjOfSelectedCases, treeNode);
     }
 }
@@ -149,6 +141,7 @@ function onCheckForZTreeOfSelectedCases(e, treeId, treeNode) {
 function removeNodes(zTreeObj, node) {
     if(node.level === 0) {
         zTreeObj.removeChildNodes(node);
+        zTreeObj.checkNode(node, false, true);
         return;
     }
     var parentNode = node.getParentNode();
@@ -182,6 +175,7 @@ function saveTask(type, id) {
             taskData.caseIds += (checkedNodes[i].caseId + ",");
         }
     }
+    taskData.caseIds = (taskData.caseIds === "")? taskData.caseIds : taskData.caseIds.substring(0, taskData.caseIds.length -1); //删除最后一个“，”
     $("#error-tip").text("").hide();
 
     $.ajax({
@@ -193,4 +187,37 @@ function saveTask(type, id) {
             showTips(data.message);
         }
     });
+}
+
+
+function getTestTaskInfoById(id) {
+    $.ajax({
+        type: "get",
+        url: "/interface/get_task_info/" + id + "/",
+        dataType: "json",
+        success: function(data) {
+            (data.success == "true")? initTestTask(data.data) : showTips(data.message);
+        }
+    });
+}
+
+
+function initTestTask(data) {
+    $("#task_name").val(data.name);
+    $("#task_description").val(data.description);
+
+    initZTreeOfAllCases(data.ztreeNodesForAllCases);
+    initZTreeOfSelectedCases(data.ztreeNodesForSelectedCases);
+
+    //解决初始化半勾选问题
+    var zTreeObjOfAllCases = $.fn.zTree.getZTreeObj("ztree_all_cases"),
+        checkNodes = zTreeObjOfAllCases.getCheckedNodes(true);
+    for(var i = 0, len = checkNodes.length; i < len; ++i) {
+        zTreeObjOfAllCases.checkNode(checkNodes[i], true, true);
+    }
+
+    if(data.ztreeNodesForSelectedCases.length >1 ) {
+        var zTreeObjOfSelectedCases = $.fn.zTree.getZTreeObj("ztree_selected_cases");
+        zTreeObjOfSelectedCases.checkNode(zTreeObjOfSelectedCases.getNodeByParam("UID", "0_0_0", null), true, true);
+    }
 }

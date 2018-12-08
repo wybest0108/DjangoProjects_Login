@@ -21,7 +21,10 @@ urlpatterns = [
     path("task_manage/", task_views.task_manage),
     path("search_task/", task_views.search_task),
     path("add_task/", task_views.add_task),
+    path("edit_task/<int:task_id>/", task_views.edit_task),
     path("delete_task/<int:task_id>/", task_views.delete_task),
     # 任务管理之接口urls
     path("save_task/", task_api.save_task),
+    path("get_task_info/<int:task_id>/", task_api.get_task_info),
+    path("update_task/<int:task_id>/", task_api.update_task),
 ]

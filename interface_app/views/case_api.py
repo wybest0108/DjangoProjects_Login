@@ -168,111 +168,89 @@ def assert_result(request):
     else:
         return response_fail("该接口只支持POST请求！")
 
-# 方法一：
-# @login_required
-# def get_cases_for_ztree(request):
-#     if request.method == "GET":
-#         ztree_nodes = [
-#             {
-#                 "zId": 0,
-#                 "name": "可选用例",
-#                 "open": "true"
-#             }
-#         ]
-#         num = 0
-#         project_all = Project.objects.all()
-#         for project in project_all:
-#             is_project_node_added = False
-#             modules = Module.objects.filter(project_id=project.id)
-#
-#             for module in modules:
-#                 is_module_node_added = False
-#                 cases = TestCase.objects.filter(module_id=module.id)
-#
-#                 for case in cases:
-#                     if is_project_node_added == False:
-#                         num += 1
-#                         pid = num
-#                         znode = {}
-#                         znode["zId"] = num
-#                         znode["pId"] = 0
-#                         znode["name"] = project.name
-#                         ztree_nodes.append(znode)
-#                         is_project_node_added = True
-#
-#                     if is_module_node_added == False:
-#                         num += 1
-#                         pid_1 = num
-#                         znode_1 = {}
-#                         znode_1["zId"] = num
-#                         znode_1["pId"] = pid
-#                         znode_1["name"] = module.name
-#                         ztree_nodes.append(znode_1)
-#                         is_module_node_added = True
-#
-#                     num += 1
-#                     znode_2 = {}
-#                     znode_2["zId"] = num
-#                     znode_2["pId"] = pid_1
-#                     znode_2["name"] = case.name
-#                     znode_2["caseId"] = case.id
-#                     ztree_nodes.append(znode_2)
-#
-#         return response_succeed(data=ztree_nodes)
-#     else:
-#         return response_fail("该接口只支持GET请求！")
 
-# 方法二：
 @login_required
 def get_cases_for_ztree(request):
     if request.method == "GET":
-        ztree_nodes = [
+
+        # 构造“已选用例树”节点数据
+        ztree_nodes_selected_cases = [
+            {
+                "zId": 0,
+                "name": "已选用例",
+                "open": "true",
+                "UID": "0_0_0"                  # 使用"项目id_模块id_用例id"作为唯一标识
+            }
+        ]
+
+        # 构造“可选用例树”节点数据
+        ztree_nodes_all_cases = [
             {
                 "zId": 0,
                 "name": "可选用例",
-                "open": "true"
+                "open": "true",
+                "UID": "0_0_0"
             }
         ]
-        num = 0
-        project_dict = {}
-        module_dict = {}
-
         case_all = TestCase.objects.all()
-        for case in case_all:
-            project_name = case.module.project.name
-            if project_name not in project_dict:
-                num += 1
-                pid = num
-                znode = {}
-                znode["zId"] = num
-                znode["pId"] = 0
-                znode["name"] = project_name
-                ztree_nodes.append(znode)
-                project_dict[project_name] = pid
-            else:
-                pid = project_dict[project_name]
+        generate_ztree_nodes(ztree_nodes_all_cases, case_all)
 
-            module_name = case.module.name
-            if module_name not in module_dict:
-                num += 1
-                pid_1 = num
-                znode_1 = {}
-                znode_1["zId"] = num
-                znode_1["pId"] = pid
-                znode_1["name"] = module_name
-                ztree_nodes.append(znode_1)
-                module_dict[module_name] = pid_1
-            else:
-                pid_1 = module_dict[module_name]
-
-            num += 1
-            znode_2 = {}
-            znode_2["zId"] = num
-            znode_2["pId"] = pid_1
-            znode_2["name"] = case.name
-            znode_2["caseId"] = case.id
-            ztree_nodes.append(znode_2)
-
-        return response_succeed(data=ztree_nodes)
+        return response_succeed(
+            data={
+                "ztreeNodesForAllCases": ztree_nodes_all_cases,
+                "ztreeNodesForSelectedCases": ztree_nodes_selected_cases
+            }
+        )
     else:
         return response_fail("该接口只支持GET请求！")
+
+
+# 构造zTree节点数据
+def generate_ztree_nodes(ztree_nodes, cases, checked_cases=[]):
+    num = 0
+    project_dict = {}
+    module_dict = {}
+
+    for case in cases:
+        if str(case.id) in checked_cases:
+            is_checked = "true"
+        else:
+            is_checked = "false"
+
+        project = case.module.project
+        if project.name not in project_dict:
+            num += 1
+            pid = num
+            znode = {}
+            znode["zId"] = num
+            znode["pId"] = 0
+            znode["name"] = project.name
+            znode["UID"] = str(project.id) + "_0_0"
+            ztree_nodes.append(znode)
+            project_dict[project.name] = pid
+        else:
+            pid = project_dict[project.name]
+
+        module = case.module
+        if module.name not in module_dict:
+            num += 1
+            pid_1 = num
+            znode_1 = {}
+            znode_1["zId"] = num
+            znode_1["pId"] = pid
+            znode_1["name"] = module.name
+            znode_1["UID"] = str(project.id) + "_" + str(module.id) + "_0"
+            ztree_nodes.append(znode_1)
+            module_dict[module.name] = pid_1
+        else:
+            pid_1 = module_dict[module.name]
+
+        num += 1
+        znode_2 = {}
+        znode_2["zId"] = num
+        znode_2["pId"] = pid_1
+        znode_2["name"] = case.name
+        znode_2["caseId"] = case.id
+        znode_2["checked"] = is_checked
+        znode_2["UID"] = str(project.id) + "_" + str(module.id) + "_" + str(case.id)
+        ztree_nodes.append(znode_2)

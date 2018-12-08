@@ -62,7 +62,6 @@ def add_case(request):
 
 @login_required
 def edit_case(request, case_id):
-    print(case_id)
     if request.method == "GET":
         return render(request, "test_case.html", {
             "type": "edit"
